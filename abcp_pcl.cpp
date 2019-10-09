@@ -144,7 +144,7 @@ int main(int argc, char * argv[]) try
 
     numofpics = askstuff("How many pics do you want",5);
 
-    sizeofhead = askstuff("What's the size of this head",2.7);
+    sizeofhead = askstuff("What's the size of this head",12);
 
     std::string additional_stuff;
     additional_stuff = askstuff("Anything else to say about the pic?", "");
@@ -224,24 +224,25 @@ int main(int argc, char * argv[]) try
         std::cout << "flipped colors"<< std::endl;
 
         //memory is cheap. time is not
+        Mat tempd = color_d.clone();
+        Mat tempp = color_p.clone();
 
+        point_vect.push_back(pcl_points);
+        color_d_vect.push_back(tempd);
+        color_p_vect.push_back(tempp);
+        std::cout << "pushed it"<< std::endl;
 
 
         try {
             // Define the name of my files to be saved
             //if (i>-11) //first frame always looks ugly, this did not work...
             {
+                if(!SAVELATER)
+                {
                 colorfilename = dirdir + "/pic" + std::to_string(i) + ".png";
                 depthfilename = dirdir + "/dep" + std::to_string(i) + ".png";
                 pointcloudfilename = dirdir + "/pcl" + std::to_string(i) + ".pcd";
-                if(SAVELATER)
-                {
-                  point_vect.push_back(pcl_points);
-                  color_d_vect.push_back(color_d);
-                  color_p_vect.push_back(color_p);
-                }
-                else
-                {
+
                 imwrite(colorfilename, color_p, compression_params);
                 imwrite(depthfilename, color_d, compression_params);
                 //nofiltering no showing, just save it
@@ -267,6 +268,10 @@ int main(int argc, char * argv[]) try
       for (auto& elem:point_vect)
       {
         auto i = &elem - &point_vect[0];
+        colorfilename = dirdir + "/pic" + std::to_string(i) + ".png";
+        depthfilename = dirdir + "/dep" + std::to_string(i) + ".png";
+        pointcloudfilename = dirdir + "/pcl" + std::to_string(i) + ".pcd";
+
         imwrite(colorfilename, color_p_vect[i], compression_params);
         imwrite(depthfilename, color_d_vect[i], compression_params);
         //nofiltering no showing, just save it
